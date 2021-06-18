@@ -12,6 +12,7 @@ import pathlib
 BASE_PATH = pathlib.Path(__file__).parent.absolute()
 
 BASE_MODELS_PATH = BASE_PATH/"data/models"
+PRED_PATH = BASE_PATH/"data/predictions/"
 
 
 def get_trainer(model, ds_train, ds_eval, args=None):
@@ -83,11 +84,12 @@ def get_submission(trainer, ds_test, file_name='default_pred.csv'):
     final_preds = F.softmax(torch.from_numpy(preds.predictions), dim=-1)
     final_binary_preds = (final_preds[:, 1] > 0.5).numpy().astype(int)
     df_res['target'] = final_binary_preds
-    df_res.to_csv(file_name, index=False)
+    df_res.to_csv(PRED_PATH/file_name, index=False)
     return df_res
 
 
 def submit(file_name='default_pred.csv', message="A submission"):
+    file_name = str(PRED_PATH /file_name)
     session = subprocess.Popen(['kaggle', 'competitions', 'submit', '-f', file_name, '-m', f'"{message}"', 'nlp-getting-started'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = session.communicate()
     print("stdout=")

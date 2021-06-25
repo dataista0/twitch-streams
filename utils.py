@@ -69,13 +69,14 @@ def nb_set_width(width='100'):
     display(HTML("<style>.container { width:" + width + "% !important; }</style>"))
 
 
-def get_train_args(model_id="default", batch_size=8, epochs=1, **kwargs):
+def get_train_args(model_id="default", batch_size=8, epochs=1, evaluation_strategy="epoch", **kwargs):
     path = BASE_MODELS_PATH / model_id
     return TrainingArguments(path, 
                              per_device_train_batch_size=batch_size,
                              per_device_eval_batch_size=batch_size,
                              num_train_epochs=epochs,
-                             evaluation_strategy="epoch", **kwargs)
+                             evaluation_strategy=evaluation_strategy, **kwargs)
+    
     
 
 def get_submission(trainer, ds_test, file_name='default_pred.csv'):
